@@ -23,7 +23,7 @@ app.put('/customer/:id', dbCustomer.updateCustomer)
 app.delete('/customer/:id', dbCustomer.deleteCustomer)
 
 app.get('/cars', dbCars.getCars)
-app.get('/cars/:id', dbCars.getCars)
+app.get('/cars/:id', dbCars.getCarsById)
 app.post('/cars', dbCars.createCars)
 app.put('/cars/:id', dbCars.updateCars)
 app.delete('/cars/:id', dbCars.deleteCars)
