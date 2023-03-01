@@ -31,15 +31,15 @@ exports.getCustomer = async (req, res) => {
 exports.getCustomerById = async (req, res) => {
 
     try{
-
-        let data = req.params.id;
+        let data = req.body;
         let result = await customerService.getCustomerById(data)
-        .then(() => res.status(200).json(Response.created('Customer')));
-        return result;
+        console.log(result)
+        return res.status(200).json(Response.list(result));
     }catch(err){
         return res.status(500).json(Response.serverError(err));
     }
 }
+
 
 exports.createCustomer = async (req, res) => {
     try{
@@ -65,7 +65,7 @@ exports.updateCustomer = async (req, res) => {
 
 exports.deleteCustomer = async (req, res) => {
     try{
-        let data = req.params.id;
+        let data = req.body;
         let result = await customerService.deleteCustomer(data)
         .then(() => res.status (200).json(Response.deleted('Customer')));
         return result;

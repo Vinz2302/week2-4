@@ -15,7 +15,7 @@ exports.getCustomer = async (page, limit) => {
 
 exports.getCustomerById = async (data) => {
     try{
-        let result = await customerRepo.getCustomerById(data);
+        var result = await customerRepo.getCustomerById(data);
         return result;
     }catch(err){
         throw new Error(err);
