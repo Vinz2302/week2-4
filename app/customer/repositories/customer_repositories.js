@@ -9,11 +9,10 @@ module.exports.getCustomer = async (skip, limit) => {
     return data.rows;
 }
 
-module.exports.getCustomerById = async (data) => {
-    const { id } = data;
+module.exports.getCustomerById = async (id) => {
     const sql = 'SELECT * FROM customer WHERE id = $1';
     let result = await client.query(sql, [id]);
-    return result.rows;
+    return result.rows ;
 }
 
 module.exports.createCustomer = async (data) => {
@@ -30,8 +29,7 @@ module.exports.updateCustomer = async (data) => {
     return result;
 }
 
-module.exports.deleteCustomer = async (data) => {
-    const { id } = data;
+module.exports.deleteCustomer = async (id) => {
     const sql = 'DELETE FROM customer WHERE id = $1'
     let result = await client.query(sql, [id]);
     return result;

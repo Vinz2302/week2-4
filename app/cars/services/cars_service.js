@@ -1,16 +1,27 @@
 const path = require ('path');
 const carsRepo = require(path.resolve('app/cars/repositories/cars_repositories'))
 
-exports.getCars = async (data) => {
+exports.getCars = async (page, limit) => {
     try{
-        let data = await carsRepo.getCars(data);
+        var page = page == 0 ? 0 : page - 1;
+        let skip = page * limit;
+        let data = await carsRepo.getCars(skip, limit);
         return data;
     }catch(err){
         throw new Error(err);
     }
 }
 
-export.createCars = async (data) => {
+exports.getCarsById = async (id) => {
+    try{
+        let result = await carsRepo.getCarsById(id);
+        return result;
+    }catch(err){
+        throw new Error(err);
+    }
+}
+
+exports.createCars = async (data) => {
     try{
         let result = await carsRepo.createCars(data);
         return result;
@@ -19,7 +30,7 @@ export.createCars = async (data) => {
     }
 }
 
-export.updateCars = async (data) => {
+exports.updateCars = async (data) => {
     try{
         let result = await carsRepo.updateCars(data);
         return result;
@@ -28,7 +39,7 @@ export.updateCars = async (data) => {
     }
 }
 
-export.deleteCars = async (data) => {
+exports.deleteCars = async (data) => {
     try{
         let result = await carsRepo.deleteCars(data);
         return result;

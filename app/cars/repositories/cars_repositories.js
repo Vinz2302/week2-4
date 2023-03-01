@@ -6,14 +6,14 @@ module.exports.getCars = async (skip, limit) => {
 
     const sql = 'SELECT * FROM cars ORDER BY id ASC OFFSET $1 LIMIT $2';
     let data = await client.query(sql,[skip, limit]);
+    console.log(data)
     return data.rows;
 }
 
-module.exports.getCars = async (data) => {
-    const { id } = data;
+module.exports.getCarsById = async (id) => {
     const sql = 'SELECT * FROM cars WHERE id = $1';
     let result = await client.query(sql, [id]);
-    return result;
+    return result.rows;
 }
 
 module.exports.createCars = async (data) => {

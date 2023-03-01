@@ -31,9 +31,8 @@ exports.getCustomer = async (req, res) => {
 exports.getCustomerById = async (req, res) => {
 
     try{
-        let data = req.body;
-        let result = await customerService.getCustomerById(data)
-        console.log(result)
+        let id = req.params.id;
+        let result = await customerService.getCustomerById(id)
         return res.status(200).json(Response.list(result));
     }catch(err){
         return res.status(500).json(Response.serverError(err));
@@ -65,8 +64,8 @@ exports.updateCustomer = async (req, res) => {
 
 exports.deleteCustomer = async (req, res) => {
     try{
-        let data = req.body;
-        let result = await customerService.deleteCustomer(data)
+        let id = req.params.id;
+        let result = await customerService.deleteCustomer(id)
         .then(() => res.status (200).json(Response.deleted('Customer')));
         return result;
     }catch(err){

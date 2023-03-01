@@ -9,10 +9,10 @@ module.exports = app => {
 
     routers.group("/v1/customer", (router) => {
         router.get('/', customerHandler.getCustomer);
-        router.get('/getbyid', customerHandler.getCustomerById);
+        router.get('/:id', customerHandler.getCustomerById);
         router.post('/create', customerHandler.createCustomer);
         router.put('/update', customerHandler.updateCustomer);
-        router.delete('/delete', customerHandler.deleteCustomer);
+        router.delete('/delete/:id', customerHandler.deleteCustomer);
     });
     app.use('/api', routers);
 };

@@ -13,9 +13,9 @@ exports.getCustomer = async (page, limit) => {
     }
 }
 
-exports.getCustomerById = async (data) => {
+exports.getCustomerById = async (id) => {
     try{
-        var result = await customerRepo.getCustomerById(data);
+        let result = await customerRepo.getCustomerById(id);
         return result;
     }catch(err){
         throw new Error(err);
@@ -40,9 +40,9 @@ exports.updateCustomer = async (data) => {
     }
 }
 
-exports.deleteCustomer = async (data) => {
+exports.deleteCustomer = async (id) => {
     try{
-        let result = await customerRepo.updateCustomer(data);
+        let result = await customerRepo.deleteCustomer(id);
         return result;
     }catch(err){
         throw new Error(err);
