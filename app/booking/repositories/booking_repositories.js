@@ -16,22 +16,21 @@ module.exports.getBookingById = async (id) => {
 }
 
 module.exports.createBooking = async (data) => {
-    const { id, name, nik, phone_number } = data;
-    const sql = 'INSERT INTO Booking VALUES ($1, $2, $3, $4, $5, $6, %7)';
+    const { id, customer_id, cars_id, start_time, end_time, total_cost, finished } = data;
+    const sql = 'INSERT INTO Booking VALUES ($1, $2, $3, $4, $5, $6, $7)';
     let result = await client.query(sql, [id, customer_id, cars_id, start_time, end_time, total_cost, finished]);
     return result;
 }
 
 module.exports.updateBooking = async (data) => {
-    const { name, nik, phone_number, id } = data;
+    const { customer_id, cars_id, start_time, end_time, total_cost, finished, id } = data;
     const sql = 'UPDATE Booking SET customer_id = $1, cars_id = $2, start_time = $3, end_time = $4, total_cost = $5, finished = $6 WHERE id = $7';
     let result = await client.query(sql, [customer_id, cars_id, start_time, end_time, total_cost, finished, id]);
     return result;
 }
 
-module.exports.deleteBooking = async (data) => {
-    const { id } = data;
-    const sql = 'DELETE FROM Booking WHERE id = $1'
+module.exports.deleteBooking = async (id) => {
+    const sql = 'DELETE FROM booking WHERE id = $1'
     let result = await client.query(sql, [id]);
     return result;
 }

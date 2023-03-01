@@ -11,7 +11,7 @@ module.exports = app => {
         router.get('/:id', bookingHandler.getBookingById);
         router.post('/create', bookingHandler.createBooking);
         router.put('/update', bookingHandler.updateBooking);
-        router.delete('/delete', bookingHandler.deleteBooking);
+        router.delete('/delete/:id', bookingHandler.deleteBooking);
     });
     app.use('/api', routers);
 };

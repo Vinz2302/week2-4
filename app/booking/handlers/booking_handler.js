@@ -32,7 +32,6 @@ exports.getBookingById = async (req, res) => {
 
     try{
         let id = req.params.id;
-        console.log(id)
         let result = await bookingService.getBookingById(id)
         return res.status(200).json(Response.list(result));
     }catch(err){
@@ -65,8 +64,8 @@ exports.updateBooking = async (req, res) => {
 
 exports.deleteBooking = async (req, res) => {
     try{
-        let data = req.body;
-        let result = await bookingService.deleteBooking(data)
+        let id = req.params.id;
+        let result = await bookingService.deleteBooking(id)
         .then(() => res.status (200).json(Response.deleted('booking')));
         return result;
     }catch(err){

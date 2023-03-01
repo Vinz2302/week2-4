@@ -62,8 +62,8 @@ exports.updateCars = async (req, res) => {
 
 exports.deleteCars = async (req, res) => {
     try{
-        let data = req.body;
-        let result = await carsService.deleteCars(data)
+        let id = req.params.id;
+        let result = await carsService.deleteCars(id)
         .then(() => res.status(200).json(Response.deleted('Cars')));
         return result;
     }catch(err){

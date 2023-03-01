@@ -17,21 +17,21 @@ module.exports.getCarsById = async (id) => {
 }
 
 module.exports.createCars = async (data) => {
-    const { id, name, nik, phone_number } = data;
+    const { id, name, rent_price_daily, stock } = data;
     const sql = 'INSERT INTO cars VALUES ($1, $2, $3, $4)';
     let result = await client.query(sql, [id, name, rent_price_daily, stock]);
     return result;
 }
 
 module.exports.updateCars = async (data) => {
-    const { name, nik, phone_number, id } = data;
+    const { name, rent_daily_price, stock, id } = data;
     const sql = 'UPDATE cars SET name = $1, rent_daily_price = $2, stock = $3 WHERE id = $4';
-    let result = await client.query(sql, [id, name, rent_price_daily, stock]);
+    let result = await client.query(sql, [name, rent_daily_price, stock, id]);
+    console.log(result)
     return result;
 }
 
-module.exports.deleteCars = async (data) => {
-    const { id } = data;
+module.exports.deleteCars = async (id) => {
     const sql = 'DELETE FROM cars WHERE id = $1'
     let result = await client.query(sql, [id]);
     return result;

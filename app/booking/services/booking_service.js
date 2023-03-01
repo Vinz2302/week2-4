@@ -40,9 +40,9 @@ exports.updateBooking = async (data) => {
     }
 }
 
-exports.deleteBooking = async (data) => {
+exports.deleteBooking = async (id) => {
     try{
-        let result = await bookingRepo.updateBooking(data);
+        let result = await bookingRepo.deleteBooking(id);
         return result;
     }catch(err){
         throw new Error(err);

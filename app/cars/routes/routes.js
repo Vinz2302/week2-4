@@ -12,7 +12,7 @@ module.exports = app => {
         router.get('/:id', carsHandler.getCarsById);
         router.post('/create', carsHandler.createCars);
         router.put('/update', carsHandler.updateCars);
-        router.delete('/delete', carsHandler.deleteCars);
+        router.delete('/delete/:id', carsHandler.deleteCars);
     });
     app.use('/api', routers);
 };

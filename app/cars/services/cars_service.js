@@ -39,9 +39,9 @@ exports.updateCars = async (data) => {
     }
 }
 
-exports.deleteCars = async (data) => {
+exports.deleteCars = async (id) => {
     try{
-        let result = await carsRepo.deleteCars(data);
+        let result = await carsRepo.deleteCars(id);
         return result;
     }catch(err){
         throw new Error(err);
