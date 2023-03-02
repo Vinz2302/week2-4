@@ -53,7 +53,7 @@ exports.updateCars = async (req, res) => {
     try{
         let data = req.body;
         let result = await carsService.updateCars(data)
-        .then(() => res.status(200),json(Response.updated('Cars')));
+        .then(() => res.status(200).json(Response.updated('Cars')));
         return result;
     }catch(err){
         return res.status(500).json(Response.serverError(err));
