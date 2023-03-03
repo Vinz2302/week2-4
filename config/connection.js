@@ -1,10 +1,17 @@
 const { Client } = require('pg')
+require('dotenv').config()
+
+const user = process.env.USER;
+const host = process.env.HOST;
+const database = process.env.DATABASE;
+const password = process.env.PASSWORD;
+
 const conf = function () {
     const client = new Client({
-        user: "postgres",
-        host: "35.187.248.198",
-        database: "trial_week2_4_vincent",
-        password: "d3v3l0p8015",
+        user: user,
+        host: host,
+        database: database,
+        password: password,
         pool: {
             max: 100,
             min: 0,
