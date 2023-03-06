@@ -17,16 +17,17 @@ module.exports.getCustomerById = async (id) => {
 }
 
 module.exports.createCustomer = async (data) => {
-    const { id, name, nik, phone_number } = data;
-    const sql = 'INSERT INTO customer VALUES ($1, $2, $3, $4)';
-    let result = await client.query(sql, [id, name, nik, phone_number]);
+    const { id, name, nik, phone_number, membership_id } = data;
+    const sql = 'INSERT INTO customer VALUES ($1, $2, $3, $4, $5)';
+    let result = await client.query(sql, [id, name, nik, phone_number, membership_id]);
     return result;
 }
 
 module.exports.updateCustomer = async (data) => {
-    const { name, nik, phone_number, id } = data;
-    const sql = 'UPDATE CUSTOMER SET name = $1, nik = $2, phone_number = $3 WHERE id = $4';
-    let result = await client.query(sql, [name, nik, phone_number, id]);
+    const { name, nik, phone_number, membership_id, id } = data;
+    console.log(data)
+    const sql = 'UPDATE CUSTOMER SET name = $1, nik = $2, phone_number = $3, membership_id = $4 WHERE id = $5';
+    let result = await client.query(sql, [name, nik, phone_number, membership_id, id]);
     return result;
 }
 
