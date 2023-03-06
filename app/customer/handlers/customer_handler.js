@@ -2,6 +2,7 @@ const path = require('path');
 
 const customerService = require(path.resolve('app/customer/services/customer_service'))
 const Response = require(path.resolve('response/response'))
+const { createSchema, updateSchema } = require(path.resolve('validator/customer_validator'))
 
 exports.getCustomer = async (req, res) => {
 
@@ -42,7 +43,10 @@ exports.getCustomerById = async (req, res) => {
 
 exports.createCustomer = async (req, res) => {
     try{
-        let data = req.body;
+        // let data = req.body;
+        let data = await createSchema.validateAsync(req.body, {
+            abortEarly: false,
+        });
         let result = await customerService.createCustomer(data)
         .then(() => res.status(200).json(Response.created('Customer')));
         return result;
@@ -53,7 +57,10 @@ exports.createCustomer = async (req, res) => {
 
 exports.updateCustomer = async (req, res) => {
     try{
-        let data = req.body;
+        // let data = req.body;
+        let data = await updateSchema.validateAsync(req.body, {
+            abortEarly: false,
+        });
         let result = await customerService.updateCustomer(data)
         .then(() => res.status(200).json(Response.updated('Customer')));
         return result;

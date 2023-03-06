@@ -2,6 +2,7 @@ const path = require('path');
 
 const carsService = require(path.resolve('app/cars/services/cars_service'))
 const Response = require(path.resolve('response/response'))
+const { createSchema, updateSchema } = require(path.resolve('validator/cars_validator'))
 
 exports.getCars = async (req, res) => {
     
@@ -40,7 +41,10 @@ exports.getCarsById = async (req, res) => {
 
 exports.createCars = async (req, res) => {
     try{
-        let data = req.body;
+        // let data = req.body;
+        let data = await createSchema.validateAsync(req.body, {
+            abortEarly: false,
+        });
         let result = await carsService.createCars(data)
         .then(() => res.status(200).json(Response.created('Cars')));
         return result;
@@ -51,7 +55,10 @@ exports.createCars = async (req, res) => {
 
 exports.updateCars = async (req, res) => {
     try{
-        let data = req.body;
+        // let data = req.body;
+        let data = await updateSchema.validateAsync(req.body, {
+            abortEarly: false,
+        });
         let result = await carsService.updateCars(data)
         .then(() => res.status(200).json(Response.updated('Cars')));
         return result;

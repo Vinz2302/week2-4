@@ -2,6 +2,7 @@ const path = require('path');
 
 const bookingService = require(path.resolve('app/booking/services/booking_service'))
 const Response = require(path.resolve('response/response'))
+const { createSchema, updateSchema } = require(path.resolve('validator/booking_validator'))
 
 exports.getBooking = async (req, res) => {
 
@@ -42,7 +43,10 @@ exports.getBookingById = async (req, res) => {
 
 exports.createBooking = async (req, res) => {
     try{
-        let data = req.body;
+        // let data = req.body;
+        let data = await createSchema.validateAsync (req.body, {
+            abortEarly: false,
+        });
         let result = await bookingService.createBooking(data)
         .then(() => res.status(200).json(Response.created('booking')));
         return result;
@@ -53,7 +57,10 @@ exports.createBooking = async (req, res) => {
 
 exports.updateBooking = async (req, res) => {
     try{
-        let data = req.body;
+        // let data = req.body;
+        let data = await updateSchema.validateAsync (req.body, {
+            abortEarly: false,
+        });
         let result = await bookingService.updateBooking(data)
         .then(() => res.status(200).json(Response.updated('booking')));
         return result;
