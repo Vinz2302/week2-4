@@ -1,7 +1,6 @@
 const path = require ('path');
 const config = require (path.resolve('config/connection.js'));
 const client = config.data;
-const validate = require (path.resolve('validator/customer_validator'));
 
 module.exports.getCustomer = async (skip, limit) => {
 
