@@ -13,6 +13,14 @@ module.exports = app => {
         router.post('/create', carsHandler.createCars);
         router.put('/update', carsHandler.updateCars);
         router.delete('/delete/:id', carsHandler.deleteCars);
+        // router.get('/select', carsHandler.selectCars);
     });
     app.use('/api', routers);
 };
+
+/* module.exports = app => {
+    routers.group("/v2/cars", (router) => {
+        router.get('/', carsHandler.selectCars);
+    });
+    app.use('/api', routers);
+}; */

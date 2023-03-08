@@ -4,7 +4,7 @@ const createSchema = joi.object({
     id: joi.number().integer().required(),
     name: joi.string().min(5).max(50).required(),
     rent_price_daily: joi.number().required(),
-    stock: joi.number().integer(),
+    stock: joi.number().integer().required(),
 });
 
 const updateSchema = joi.object({
@@ -14,7 +14,12 @@ const updateSchema = joi.object({
     id: joi.number().integer().required()
 });
 
+const selectSchema = joi.object({
+    id: joi.number().required(),
+})
+
 module.exports = {
     createSchema,
     updateSchema,
+    selectSchema,
 }

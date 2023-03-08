@@ -2,7 +2,9 @@ const path = require('path');
 
 const carsService = require(path.resolve('app/cars/services/cars_service'))
 const Response = require(path.resolve('response/response'))
-const { createSchema, updateSchema } = require(path.resolve('validator/cars_validator'))
+const { createSchema, updateSchema, selectSchema } = require(path.resolve('validator/cars_validator'))
+const bookingService = require(path.resolve('app/booking/services/booking_service'))
+const bookingHandler = require(path.resolve('app/booking/handlers/booking_handler'))
 
 exports.getCars = async (req, res) => {
     
@@ -73,6 +75,19 @@ exports.deleteCars = async (req, res) => {
         let result = await carsService.deleteCars(id)
         .then(() => res.status(200).json(Response.deleted('Cars')));
         return result;
+    }catch(err){
+        return res.status(500).json(Response.serverError(err));
+    }
+}
+
+exports.selectCars = async (req, res) => {
+
+    try{
+        // let data = await selectSchema.validateAsync(bookingService.carId)
+        let data = await bookingHandler.updateBooking();
+        let result = await carsService.selectCars(data);
+        console.log(result)
+        return res.status(200).json(Response.list(result));
     }catch(err){
         return res.status(500).json(Response.serverError(err));
     }

@@ -12,7 +12,7 @@ module.exports.getCustomer = async (skip, limit) => {
 module.exports.getCustomerById = async (id) => {
     const sql = 'SELECT * FROM customer WHERE id = $1';
     let result = await client.query(sql, [id]);
-    return result.rows ;
+    return result.rows[0] ;
 }
 
 module.exports.createCustomer = async (data) => {

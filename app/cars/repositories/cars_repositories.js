@@ -13,7 +13,7 @@ module.exports.getCars = async (skip, limit) => {
 module.exports.getCarsById = async (id) => {
     const sql = 'SELECT * FROM cars WHERE id = $1';
     let result = await client.query(sql, [id]);
-    return result.rows;
+    return result.rows[0];
 }
 
 module.exports.createCars = async (data) => {
@@ -32,7 +32,14 @@ module.exports.updateCars = async (data) => {
 }
 
 module.exports.deleteCars = async (id) => {
-    const sql = 'DELETE FROM cars WHERE id = $1'
+    const sql = 'DELETE FROM cars WHERE id = $1';
     let result = await client.query(sql, [id]);
     return result;
 }
+
+/* module.exports.selectCars = async (data) => {
+    const { id } = data;
+    const sql = 'SELECT * FROM cars WHERE id = $1';
+    let result = await client.query(sql, [id]);
+    return result.rows;
+} */

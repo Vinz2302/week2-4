@@ -8,7 +8,7 @@ const memberHandler = require(path.resolve('app/membership/handlers/member_handl
 module.exports = app => {
 
     routers.group("/v1/member", (router) => {
-        router.get('/', memberHandler.getMember);
+        router.get('/:id', memberHandler.getMembership);
     });
-    app.use('/api')
+    app.use('/api', routers)
 }

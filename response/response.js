@@ -60,3 +60,12 @@ exports.notFound = (message) => {
 
     return responseReturn;
 }
+
+exports.badRequest = (message) => {
+
+    responseReturn.status = false;
+    response.code = 400;
+    response.message = message;
+
+    return responseReturn;
+}

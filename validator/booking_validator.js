@@ -6,8 +6,8 @@ const createSchema = joi.object({
     cars_id: joi.number().integer().required(),
     start_time: joi.date().required(),
     end_time: joi.date().required(),
-    total_cost: joi.number().integer().required(),
-    finished: joi.boolean().required(),
+    booktype_id: joi.number().integer().required(),
+    driver_id: joi.number().integer().required(),
 });
 
 const updateSchema = joi.object({
@@ -15,8 +15,8 @@ const updateSchema = joi.object({
     cars_id: joi.number().integer().optional(),
     start_time: joi.date().optional(),
     end_time: joi.date().optional(),
-    total_cost: joi.number().integer().optional(),
-    finished: joi.boolean().optional(),
+    booktype_id: joi.number().integer().optional(),
+    driver_id: joi.number().integer().optional(),
     id: joi.number().required(),
 });
 
