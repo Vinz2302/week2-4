@@ -23,6 +23,15 @@ exports.getBookingById = async (id) => {
     }
 }
 
+exports.getBookingByDriver = async (id) => {
+    try{
+        var result = await bookingRepo.getBookingByDriver(id);
+        return result;
+    }catch(err){
+        throw new Error(err);
+    }
+}
+
 exports.createBooking = async (data) => {
 
     try{
@@ -30,13 +39,23 @@ exports.createBooking = async (data) => {
         startTime = data.start_time.getTime();
         endTime = data.end_time.getTime();
         range = (endTime - startTime) / (1000 * 3600 * 24);
+        range = range + 1;
         if (range < 0) throw "invalid date";
 
         total_cost = range*data.rent_daily_price
 
         total_driver_cost = range*data.driverCost
 
+        data.membership = data.membership || 0
+        
         discount = total_cost*data.membershipValue
+        discount = discount || 0
+
+        driver_incentive = total_cost*0.05
+
+        console.log(total_cost)
+        console.log(driver_incentive)
+        console.log(data.id)
 
         let result = await bookingRepo.createBooking(data);
         return result;
@@ -52,17 +71,23 @@ exports.updateBooking = async (data) => {
         startTime = data.start_time.getTime();
         endTime = data.end_time.getTime();
         range = (endTime - startTime) / (1000 * 3600 * 24);
-        if (range < 0) throw "invalid date";
+        range = range + 1;
+        if (range <= 0) throw "invalid date";
 
-        console.log(range)
+        total_cost = range*data.rent_daily_price
 
-        let carId = data.cars_id
-        let customerId = data.customer_id
-        //console.log(carId,customerId)
+        total_driver_cost = range*data.driverCost
+
+        discount = total_cost*data.membershipValue
+        discount = discount || 0
+
+        driver_incentive = total_cost*0.05
+
+        //console.log(total_cost, total_driver_cost, discount)
 
         let result = await bookingRepo.updateBooking(data);
             
-        return [result, carId, customerId];
+        return result;
     }catch(err){
         throw new Error(err);
     }
@@ -72,25 +97,6 @@ exports.deleteBooking = async (id) => {
     try{
         let result = await bookingRepo.deleteBooking(id);
         return result;
-    }catch(err){
-        throw new Error(err);
-    }
-}
-
-exports.carId = async (data) => {
-    try{
-        let carId = data;
-        return carId;
-    }catch(err){
-        throw new Error(err);
-    }
-}
-
-exports.customerId = async (data) => {
-    console.log(data)
-    try{
-        let customerId = data;
-        return customerId;
     }catch(err){
         throw new Error(err);
     }

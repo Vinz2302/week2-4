@@ -15,7 +15,7 @@ const updateSchema = joi.object({
     name: joi.string().min(5).max(50).optional(),
     nik: joi.number().integer().optional(),
     phone_number: joi.number().integer().optional(),
-    membership_id: joi.number().integer().optional(),
+    membership_id: joi.number().integer().optional().allow(null).allow(''),
     id: joi.number().integer().required(),
 });
 
