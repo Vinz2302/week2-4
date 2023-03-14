@@ -1,4 +1,8 @@
 const path = require('path');
+const moment = require('moment');
+
+const momentRange = require('moment-range');
+const extendedMoment = momentRange.extendMoment(moment);
 
 const bookingService = require(path.resolve('app/booking/services/booking_service'))
 const Response = require(path.resolve('response/response'))
@@ -61,11 +65,15 @@ exports.createBooking = async (req, res) => {
     try{
         let data = await createSchema.validateAsync (req.body, {
             abortEarly: false,
-        });
+        })
         let customer = await customerRepo.getCustomerById(data.customer_id)
         .then(response => {
-            if (response == 0) {
-                return res.status(404).json(Response.notFound('Customer id not found'))
+            if (response == undefined) {
+                const error = new Error()
+                error.status = 404
+                error.message = "Customer ID not Found"
+                throw error
+                //return res.status(404).json(Response.notFound('Customer id not found'))
             }
 
             data.membership = response.membership_id;
@@ -77,7 +85,10 @@ exports.createBooking = async (req, res) => {
             let membership = await memberRepo.getMembership(data.membership)
         .then(response => {
             if (response == null) {
-                return res.status(404).json(Response.notFound('No membership applied'))
+                const error = new Error()
+                error.status = 404
+                error.message = "Membership not Found"
+                throw error
             }
             data.membershipValue = response.daily_discount;
         })
@@ -85,106 +96,80 @@ exports.createBooking = async (req, res) => {
         
         let car = await carsRepo.getCarsById(data.cars_id)
         .then(response => {
-            if (response == 0) {
-                return res.status(404).json(Response.notFound('Car ID not found'))
+            if (response == undefined) {
+                const error = new Error()
+                error.status = 404
+                error.message = "Car ID not Found"
+                throw error
             }
             if (response.stock == 0){
-                return res.status(400).json(Response.badRequest('Cars out of stock'))
+                const error = new Error()
+                error.status = 400
+                error.message = "Car out of stock"
+                throw error
             }
             data.stock = response.stock
             data.rent_daily_price = response.rent_daily_price
         })
+        
 
         let booking_data = await bookingRepo.getBookingByDriver(data.driver_id)
         .then(response => {
 
-            var newStartDate = data.start_time
-            var newEndDate = data.end_time
+            if(response.length != 0){
 
-            // data from  booking table
-            let allDates = [];
+            const startDate = moment(data.start_time)
+            const endDate = moment(data.end_time)
+
+            const range = extendedMoment.range(startDate, endDate);
+
+            for (const date of range.by('day')) {
+            //console.log('dateRequest', date.format('YYYY-MM-DD'));
+            let requestDate = moment(date).format('YYYY-MM-DD')
             response.forEach( dates => {
-                allDates.push(
-                    dates.start_time,dates.end_time
-                )
+            startDateBooking = moment(dates.start_time).format('YYYY-MM-DD')
+            endDateBooking = moment(dates.end_time).format('YYYY-MM-DD')
+
+                    const rangeBooking = extendedMoment.range(startDateBooking, endDateBooking);
+                    for (let dateBooking of rangeBooking.by('day')){
+                        dateBooking = moment(dateBooking).format('YYYY-MM-DD')
+                        //console.log('date from booking', dateBooking);
+                        if (requestDate === dateBooking) {
+                            const error = new Error()
+                            error.status = 400
+                            error.message = "Driver not available on that day"
+                            throw error
+                        }
+                    }
             })
-
-            // data from user input
-            let bookData = [];
-            [data].forEach(dates => 
-                bookData.push(
-                    dates.start_time,dates.end_time
-                )
-            )
-
-            let pairs = allDates.map((val, i) => (i % 2 === 0 ? allDates.slice(i, i + 2) : null)).filter(Boolean);
-        
-            let bookedRange = [];
-            for (let i = 0; i < pairs.length; i++){
-                //console.log(pairs[i].)
-                //allBooked.setDate(pairs[i])
-                while (pairs[i][0] <= pairs[i][1]){
-                    pairs[i][0].setDate(pairs[i][0].getDate()+1)
-                    bookedRange.push(pairs[i][0].toISOString());
-                }
             }
-
-            let currentStartDate = new Date(newStartDate.getTime());
-            const currentRange = [];
-            while (currentStartDate.getTime() <= newEndDate.getTime()){
-
-                currentRange.push(currentStartDate.toISOString());
-                currentStartDate.setDate(currentStartDate.getDate()+1);
-            }
-            
-            /* for (i = newStartDate; i < newEndDate; i++){
-                while()
-            } */
-
-            let isContains = currentRange.some(item => bookedRange.includes(item))
-            if (isContains == true){
-                console.log(isContains);
-                return res.status(400).json(Response.badRequest('Driver Not Available'))
-            }
+        }
         })
 
-        /* console.log(booking_data)
-        for (i=0; i < booking_data.length; i++){
-            console.log(booking_data[i].id)
-        }
- */
-        
 
-        /* while (newStartDate <= newEndDate){
-            //console.log(newStartDate.toISOString());
-            newStartDate.setDate(newStartDate.getDate()+1)
-            currentRange.push(newStartDate.toISOString());
-        }
-
-        /* let bookedRange = [];
-        pairs.forEach(pair => {
-            let startDate = pair[0];
-            const endDate = pair[1];
-  
-            while (startDate <= endDate) {
-                bookedRange.push(startDate.toISOString());
-                startDate = new Date(startDate.getTime() + 86400000);
-            }
-        }); */
-
-
-        /* let driver = await driverRepo.getDriverById(data.driver_id)
+        let driver = await driverRepo.getDriverById(data.driver_id)
         .then(response => {
             if (response == null){
-                return res.status(404).json(Response.notFound('Book without driver'))
+                const error = new Error()
+                error.status = 404
+                error.message = "Driver ID not Found"
+                throw error
             }
             data.driverCost = response.daily_cost
         })
+
+        //let booktype = await bookingRepo.getBookingById
         
         let result = await bookingService.createBooking(data)
         .then(() => res.status(200).json(Response.created('booking')));
-        return result; */
+        return result;
     }catch(err){
+        if (err.status === 404){
+            return res.status(404).json(Response.notFound(err.message));
+        }
+        if (err.status === 400){
+            return res.status(400).json(Response.badRequest(err.message));
+        }
         return res.status(500).json(Response.serverError(err));
     }
 }
@@ -195,10 +180,24 @@ exports.updateBooking = async (req, res) => {
             abortEarly: false,
         })
 
+        let booking = await bookingRepo.getBookingById(data.id)
+        .then(response => {
+             if (response.finished == true){
+                const error = new Error()
+                error.status = 400
+                error.message = "Booking has already finished"
+                throw error
+             }
+             data.previousCar = response.cars_id;
+        })
+
         let customer = await customerRepo.getCustomerById(data.customer_id)
         .then(response => {
             if (response == 0) {
-                return res.status(404).json(Response.notFound('Customer id not found'))
+                const error = new Error()
+                error.status = 404
+                error.message = "Customer ID not Found"
+                throw error
             }
 
             data.membership = response.membership_id;
@@ -207,32 +206,73 @@ exports.updateBooking = async (req, res) => {
         //let membership = await memberRepo.getMembership(data.membership)
         //data.membershipValue = membership.daily_discount;
         if (data.membership != null) {
-            let membership = await memberRepo.getMembership(data.membership)
+        let membership = await memberRepo.getMembership(data.membership)
         .then(response => {
             if (response == null) {
-                return res.status(404).json(Response.notFound('No membership applied'))
+                const error = new Error()
+                error.status = 404
+                error.message = "No membership applied"
+                throw error
             }
             data.membershipValue = response.daily_discount;
         })
         }
         
-        
+        //check current stock
         let car = await carsRepo.getCarsById(data.cars_id)
         .then(response => {
             if (response == 0) {
-                return res.status(404).json(Response.notFound('Car ID not found'))
+                const error = new Error()
+                error.status = 404
+                error.message = "Car ID not Found"
+                throw error
             }
             if (response.stock == 0){
-                return res.status(400).json(Response.badRequest('Cars out of stock'))
+                const error = new Error()
+                error.status = 400
+                error.message = "Cars out of stock"
+                throw error
             }
             data.stock = response.stock
             data.rent_daily_price = response.rent_daily_price
+        })
+
+        let booking_data = await bookingRepo.getBookingByDriver(data.driver_id)
+        .then(response => {
+            if(response.length != 0){
+                const startDate = moment(data.start_time)
+                const endDate = moment(data.end_time)
+
+                const range = extendedMoment.range(startDate, endDate);
+                
+                for(const date of range.by('day')){
+                    let requestDate = moment(date).format('YYYY-MM-DD')
+                    response.forEach( dates => {
+                        startDateBooking = moment(dates.start_time).format('YYYY-MM-DD')
+                        endDateBooking = moment(dates.end_time).format('YYYY-MM-DD')
+
+                        const rangeBooking = extendedMoment.range(startDateBooking, endDateBooking);
+                        for (let dateBooking of rangeBooking.by('day')){
+                            dateBooking = moment(dateBooking).format('YYYY-MM-DD')
+                            if(requestDate === dateBooking){
+                                const error = new Error()
+                                error.status = 400
+                                error.message = "Driver not available on that day"
+                                throw error
+                            }
+                        }
+                    })
+                }
+            }
         })
         
         let driver = await driverRepo.getDriverById(data.driver_id)
         .then(response => {
             if (response ==null){
-                return res.status(404).json(Response.notFound('Book without driver'))
+                const error = new Error()
+                error.status = 404
+                error.message = "Driver not Found"
+                throw error
             }
             data.driverCost = response.daily_cost
         })
@@ -241,6 +281,12 @@ exports.updateBooking = async (req, res) => {
         .then(() => res.status(200).json(Response.updated('booking')));
         return result;
     }catch(err){
+        if (err.status === 404){
+            return res.status(404).json(Response.notFound(err.message));
+        }
+        if (err.status === 400){
+            return res.status(400).json(Response.badRequest(err.message));
+        }
         return res.status(500).json(Response.serverError(err));
     }
 }

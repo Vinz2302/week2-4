@@ -55,8 +55,8 @@ exports.serverError = (error) => {
 exports.notFound = (message) => {
     
     responseReturn.status = false;
-    response.code = 404;
-    response.message = message;
+    responseReturn.code = 404;
+    responseReturn.message = message;
 
     return responseReturn;
 }
@@ -64,8 +64,8 @@ exports.notFound = (message) => {
 exports.badRequest = (message) => {
 
     responseReturn.status = false;
-    response.code = 400;
-    response.message = message;
+    responseReturn.code = 400;
+    responseReturn.message = message;
 
     return responseReturn;
 }

@@ -28,46 +28,60 @@ module.exports.createBooking = async (data) => {
     let result =  client.query(sql, [id, customer_id, cars_id, start_time, end_time, booktype_id, driver_id, total_cost, total_driver_cost, discount]);
     return result; */
 
-    //const { id, customer_id, cars_id, start_time, end_time, booktype_id, driver_id } = data;
+    const { customer_id, cars_id, start_time, end_time, booktype_id, driver_id } = data;
     //console.log(data.allDates);
 
     try{
         await client.query('BEGIN;');
 
-        await client.query('INSERT INTO Booking (id, customer_id, cars_id, start_time, end_time, booktype_id, driver_id, total_cost, total_driver_cost, discount) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);', [id, customer_id, cars_id, start_time, end_time, booktype_id, driver_id, total_cost, total_driver_cost, discount]);
-        //await client.query('update cars set stock = stock - 1 where id = $1;', [cars_id])
-
-        //await client.query('insert into driver_incentive (')
+        await client.query('INSERT INTO Booking (customer_id, cars_id, start_time, end_time, booktype_id, driver_id, total_cost, total_driver_cost, discount) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);', [customer_id, cars_id, start_time, end_time, booktype_id, driver_id, total_cost, total_driver_cost, discount]);
+        if (data.booktype_id === 2){
+            const lastBooking = await client.query('select id from booking order by id desc limit 1');
+            const bookingId = lastBooking.rows[0].id
+            //await client.query(`insert into driver_incentive (booking_id, incentive) values (nextval('booking_id_seq'), $1)`, [driver_incentive]);
+            await client.query(`insert into driver_incentive (booking_id, incentive) values ($1, $2)`, [bookingId, driver_incentive]);
+        }
+        await client.query('update cars set stock = stock - 1 where id = $1;', [cars_id])
 
         await client.query('COMMIT;');
+
+        /* if (data.booktype_id === 2){
+            await client.query('BEGIN;');
+            await client.query(`insert into driver_incentive (booking_id, incentive) values(nextval('booking_id_seq') - 1, $1)`, [driver_incentive]);
+            //await client.query(`insert into driver_incentive (booking_id) select nextval('booking_id_seq');`);
+            ///await client.query('insert into driver_incentive (incentive) values $1', [driver_incentive]);
+            await client.query('COMMIT;');
+        } */
+
         console.log('Transaction Success')
     }catch(err) {
         await client.query('ROLLBACK;')
         console.log('Transaction Failed')
-        //throw err
+        throw err
     }
     
 }
 
 module.exports.updateBooking = async (data) => {
     
-    const { customer_id, cars_id, start_time, end_time, booktype_id, driver_id, id } = data;
-
-    /* const sql = 'UPDATE Booking SET customer_id = $1, cars_id = $2, start_time = $3, end_time = $4, booktype_id = $5, driver_id = $6, total_cost = $7, total_driver_cost = $8, discount = $9 WHERE id = $10';
-    let result = await client.query(sql, [customer_id, cars_id, start_time, end_time, booktype_id, driver_id, total_cost, total_driver_cost, discount, id]);
-    return result; */
+    //const { customer_id, cars_id, start_time, end_time, booktype_id, driver_id, id } = data;
+    console.log(data.previousCar);
 
     try{
         await client.query('BEGIN;');
 
         await client.query('UPDATE Booking SET customer_id = $1, cars_id = $2, start_time = $3, end_time = $4, booktype_id = $5, driver_id = $6, total_cost = $7, total_driver_cost = $8, discount = $9 WHERE id = $10', [customer_id, cars_id, start_time, end_time, booktype_id, driver_id, total_cost, total_driver_cost, discount, id]);
+        
+        //await client.query('update cars set stock = stock + 1 where id = $1;', [data.previousCar]);
+
+        //await client.query('update cars set stock = stock - 1 where id = $1;', [cars_id]);
 
         await client.query('COMMIT;');
         console.log('Transaction Success')
     }catch(err) {
         await client.query('ROLLBACK;')
         console.log('Transaction Failed')
-        //throw err
+        throw err
     }
     
 }

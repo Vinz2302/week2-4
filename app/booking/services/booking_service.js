@@ -35,7 +35,6 @@ exports.getBookingByDriver = async (id) => {
 exports.createBooking = async (data) => {
 
     try{
-
         startTime = data.start_time.getTime();
         endTime = data.end_time.getTime();
         range = (endTime - startTime) / (1000 * 3600 * 24);
@@ -53,9 +52,18 @@ exports.createBooking = async (data) => {
 
         driver_incentive = total_cost*0.05
 
-        console.log(total_cost)
-        console.log(driver_incentive)
-        console.log(data.id)
+        // console.log(discount);
+        // console.log(total_driver_cost);
+        // console.log(total_cost)
+        // console.log(driver_incentive)
+        // console.log(data.booktype_id);
+        if (data.booktype_id === 1) {
+             total_driver_cost = 0
+             driver_incentive = 0
+        }
+        // console.log(total_driver_cost);
+        // console.log(driver_incentive);
+        //console.log(data)
 
         let result = await bookingRepo.createBooking(data);
         return result;
@@ -78,15 +86,17 @@ exports.updateBooking = async (data) => {
 
         total_driver_cost = range*data.driverCost
 
+        data.membership = data.membership || 0
+
         discount = total_cost*data.membershipValue
         discount = discount || 0
 
         driver_incentive = total_cost*0.05
 
-        //console.log(total_cost, total_driver_cost, discount)
+        console.log(total_cost, total_driver_cost, discount)
+        //console.log(data.previousCar);
 
         let result = await bookingRepo.updateBooking(data);
-            
         return result;
     }catch(err){
         throw new Error(err);
