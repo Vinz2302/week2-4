@@ -80,12 +80,17 @@ module.exports.updateBooking = async (data) => {
         console.log('Transaction Failed')
         throw err
     }
-    
 }
-
 
 module.exports.deleteBooking = async (id) => {
     const sql = 'DELETE FROM booking WHERE id = $1'
     let result = await client.query(sql, [id]);
+    return result;
+}
+
+module.exports.finishBooking = async (data) => {
+    const { finished, id } = data;
+    const sql = 'update booking set finished = $1 where id = $2'
+    let result = await client.query(sql, [finished, id]);
     return result;
 }

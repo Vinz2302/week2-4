@@ -115,3 +115,12 @@ exports.deleteBooking = async (id) => {
         throw new Error(err);
     }
 }
+
+exports.finishBooking = async (data) => {
+    try{
+        let result = await bookingRepo.finishBooking(data);
+        return result;
+    }catch(err){
+        throw new Error(err);
+    }
+}

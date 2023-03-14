@@ -316,3 +316,15 @@ exports.deleteBooking = async (req, res) => {
     }
 
 }
+
+exports.finishBooking = async (req, res) => {
+    try{
+        let data = req.body
+        console.log(data);
+        let result = await bookingService.finishBooking(data)
+        .then(() => res.status (200).json(Response.updated('booking')));
+        return result
+    }catch(err){
+        return res.status(500).json(Response.serverError(err));
+    }
+}
