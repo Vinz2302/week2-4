@@ -28,7 +28,7 @@ module.exports.createBooking = async (data) => {
     let result =  client.query(sql, [id, customer_id, cars_id, start_time, end_time, booktype_id, driver_id, total_cost, total_driver_cost, discount]);
     return result; */
 
-    const { customer_id, cars_id, start_time, end_time, booktype_id, driver_id } = data;
+    //const { customer_id, cars_id, start_time, end_time, booktype_id, driver_id } = data;
     //console.log(data.allDates);
 
     try{
@@ -45,14 +45,6 @@ module.exports.createBooking = async (data) => {
 
         await client.query('COMMIT;');
 
-        /* if (data.booktype_id === 2){
-            await client.query('BEGIN;');
-            await client.query(`insert into driver_incentive (booking_id, incentive) values(nextval('booking_id_seq') - 1, $1)`, [driver_incentive]);
-            //await client.query(`insert into driver_incentive (booking_id) select nextval('booking_id_seq');`);
-            ///await client.query('insert into driver_incentive (incentive) values $1', [driver_incentive]);
-            await client.query('COMMIT;');
-        } */
-
         console.log('Transaction Success')
     }catch(err) {
         await client.query('ROLLBACK;')
@@ -64,17 +56,22 @@ module.exports.createBooking = async (data) => {
 
 module.exports.updateBooking = async (data) => {
     
-    //const { customer_id, cars_id, start_time, end_time, booktype_id, driver_id, id } = data;
-    console.log(data.previousCar);
+    const { customer_id, cars_id, start_time, end_time, booktype_id, driver_id, id } = data;
+    console.log(data);
+    console.log(driver_incentive);
 
     try{
         await client.query('BEGIN;');
 
         await client.query('UPDATE Booking SET customer_id = $1, cars_id = $2, start_time = $3, end_time = $4, booktype_id = $5, driver_id = $6, total_cost = $7, total_driver_cost = $8, discount = $9 WHERE id = $10', [customer_id, cars_id, start_time, end_time, booktype_id, driver_id, total_cost, total_driver_cost, discount, id]);
         
-        //await client.query('update cars set stock = stock + 1 where id = $1;', [data.previousCar]);
+        await client.query('update cars set stock = stock + 1 where id = $1;', [data.previousCar]);
 
-        //await client.query('update cars set stock = stock - 1 where id = $1;', [cars_id]);
+        await client.query('update cars set stock = stock - 1 where id = $1;', [cars_id]);
+
+        if (data.booktype_id === 2){
+            await client.query('update driver_incentive set incentive = $1 where booking_id = $2;', [driver_incentive, id])
+        }
 
         await client.query('COMMIT;');
         console.log('Transaction Success')
@@ -85,6 +82,7 @@ module.exports.updateBooking = async (data) => {
     }
     
 }
+
 
 module.exports.deleteBooking = async (id) => {
     const sql = 'DELETE FROM booking WHERE id = $1'

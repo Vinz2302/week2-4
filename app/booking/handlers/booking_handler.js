@@ -121,6 +121,13 @@ exports.createBooking = async (req, res) => {
             const startDate = moment(data.start_time)
             const endDate = moment(data.end_time)
 
+            if (startDate > endDate){
+                const error = new Error()
+                error.status = 404
+                error.message = "invalid date"
+                throw error
+            }
+
             const range = extendedMoment.range(startDate, endDate);
 
             for (const date of range.by('day')) {
@@ -242,6 +249,13 @@ exports.updateBooking = async (req, res) => {
             if(response.length != 0){
                 const startDate = moment(data.start_time)
                 const endDate = moment(data.end_time)
+
+                if (startDate > endDate){
+                    const error = new Error()
+                    error.status = 404
+                    error.message = "invalid date"
+                    throw error
+                }
 
                 const range = extendedMoment.range(startDate, endDate);
                 

@@ -93,8 +93,12 @@ exports.updateBooking = async (data) => {
 
         driver_incentive = total_cost*0.05
 
+        if (data.booktype_id === 1) {
+            total_driver_cost = 0
+            driver_incentive = 0
+       }
+
         console.log(total_cost, total_driver_cost, discount)
-        //console.log(data.previousCar);
 
         let result = await bookingRepo.updateBooking(data);
         return result;
