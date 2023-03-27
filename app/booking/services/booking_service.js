@@ -53,17 +53,17 @@ exports.createBooking = async (data) => {
         driver_incentive = total_cost*0.05
 
         // console.log(discount);
-        // console.log(total_driver_cost);
+        //console.log(total_driver_cost);
         // console.log(total_cost)
-        // console.log(driver_incentive)
+        //console.log(driver_incentive)
         // console.log(data.booktype_id);
         if (data.booktype_id === 1) {
              total_driver_cost = 0
              driver_incentive = 0
         }
-        // console.log(total_driver_cost);
-        // console.log(driver_incentive);
-        //console.log(data)
+        console.log(total_driver_cost);
+        console.log(driver_incentive);
+        console.log(data)
 
         let result = await bookingRepo.createBooking(data);
         return result;
@@ -75,20 +75,20 @@ exports.createBooking = async (data) => {
 exports.updateBooking = async (data) => {
 
     try{
+        //console.log(data);
 
         startTime = data.start_time.getTime();
         endTime = data.end_time.getTime();
         range = (endTime - startTime) / (1000 * 3600 * 24);
         range = range + 1;
-        if (range <= 0) throw "invalid date";
 
-        total_cost = range*data.rent_daily_price
+        total_cost = Math.round(range*data.rent_daily_price)
 
-        total_driver_cost = range*data.driverCost
+        total_driver_cost = Math.round(range*data.driverCost)
 
         data.membership = data.membership || 0
 
-        discount = total_cost*data.membershipValue
+        discount = Math.round(total_cost*data.membershipValue)
         discount = discount || 0
 
         driver_incentive = total_cost*0.05
@@ -98,7 +98,7 @@ exports.updateBooking = async (data) => {
             driver_incentive = 0
        }
 
-        console.log(total_cost, total_driver_cost, discount)
+        console.log(total_cost, total_driver_cost, discount);
 
         let result = await bookingRepo.updateBooking(data);
         return result;
@@ -107,9 +107,9 @@ exports.updateBooking = async (data) => {
     }
 }
 
-exports.deleteBooking = async (id) => {
+exports.deleteBooking = async (data) => {
     try{
-        let result = await bookingRepo.deleteBooking(id);
+        let result = await bookingRepo.deleteBooking(data);
         return result;
     }catch(err){
         throw new Error(err);
@@ -118,7 +118,59 @@ exports.deleteBooking = async (id) => {
 
 exports.finishBooking = async (data) => {
     try{
+
+        const startTimes = new Date(data.startTime);
+        const endTimes = new Date(data.endTime);
+
+        startTime = startTimes.getTime();
+        endTime = endTimes.getTime();
+
+        range = (endTime - startTime) / (1000 * 3600 * 24);
+
+        range = range + 1;
+
+        total_cost = Math.round(range*data.rent_daily_price)
+
+        total_driver_cost = Math.round(range*data.driverCost)
+        
+        discount = Math.round(total_cost*data.membershipValue)
+
+        console.log(range);
+
+        console.log(total_cost);
+        console.log(total_driver_cost);
+        console.log(discount);
+
         let result = await bookingRepo.finishBooking(data);
+        return result;
+    }catch(err){
+        throw new Error(err);
+    }
+}
+
+/* exports.totalDriverCost = async (data) => {
+    try{
+        let result = await bookingRepo.totalDriverCost(data); 
+        return result;
+    }catch(err){
+        throw new Error(err);
+    }
+} */
+
+exports.totalDriverCost = async (data) => {
+    try{
+        let result = await bookingRepo.totalDriverCost(data); 
+        return result;
+    }catch(err){
+        throw new Error(err);
+    }
+}
+
+exports.totalDriverIncentive = async (data) => {
+    try{
+        console.log(data.incentive);
+        
+        let result = await bookingRepo.getDriverIncentive(data);
         return result;
     }catch(err){
         throw new Error(err);

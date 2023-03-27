@@ -7,7 +7,7 @@ const bookingHandler = require(path.resolve('app/booking/handlers/booking_handle
 
 module.exports = app => {
     routers.group("/v1/finish", (router) => {
-        router.post('/', bookingHandler.finishBooking);
+        router.put('/:id', bookingHandler.finishBooking);
     });
     app.use('/api', routers);
 };

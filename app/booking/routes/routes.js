@@ -10,8 +10,12 @@ module.exports = app => {
         router.get('/', bookingHandler.getBooking);
         router.get('/:id', bookingHandler.getBookingById);
         router.post('/create', bookingHandler.createBooking);
-        router.put('/update', bookingHandler.updateBooking);
+        router.put('/update/:id', bookingHandler.updateBooking);
         router.delete('/delete/:id', bookingHandler.deleteBooking);
+        router.get('/totaldrivercost/:year/:month', bookingHandler.totalDriverCost);
+        router.get('/totaldriverincentive/:year/:month', bookingHandler.totalDriverIncentive);
+        router.get('/totaldriverexpense/:year/:month', bookingHandler.totalDriverExpense);
+        router.get('/totalgrossincome/:year/:month', bookingHandler.totalGrossIncome);
     });
     app.use('/api', routers);
 };
